@@ -1,19 +1,13 @@
 // import { useState } from "react";
 
 import avatar from "/images/avatar.png";
-import logo from "/images/logo.svg";
+import Header from "./components/Header";
 
 function App() {
   return (
     <>
       <div className="page">
-        <header className="header">
-          <nav className="nav">
-            <img src={logo} alt="Around The U.S. Logo" className="nav__logo" />
-          </nav>
-          <h1 className="header__title">Around The U.S.</h1>
-          <div className=""></div>
-        </header>
+        <Header></Header>
         <main className="content">
           <section className="popup" id="avatar-popup">
             <div className="popup__container popup__container--avatar">
