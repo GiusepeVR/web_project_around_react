@@ -5,13 +5,9 @@
   top: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  display: none;
-  z-index: 10;
-}
-
-.image-popup_opened {
   display: flex;
   justify-content: center;
+  z-index: 10;
 }
 
 .image-popup__container {
@@ -22,7 +18,6 @@
   position: absolute;
   top: 123px;
   color: black;
-  border-radius: 10px;
   width: auto;
 }
 

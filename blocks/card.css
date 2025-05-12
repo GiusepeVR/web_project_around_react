@@ -1,9 +1,4 @@
-.photo-grid {
-  width: calc(100% - 38px);
-  margin: 0 auto;
-}
-
-.photo-grid__card {
+.card {
   position: relative;
   margin-left: auto;
   margin-right: auto;
@@ -12,14 +7,14 @@
   margin-bottom: 20px;
 }
 
-.photo-grid__card-image {
+.card__image {
   width: 100%;
   height: 282px;
   object-fit: cover;
   border-radius: 10px 10px 0px 0px;
 }
 
-.photo-grid__card-bottom {
+.card__description {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -27,7 +22,7 @@
   margin-right: 21px;
 }
 
-.photo-grid__card-title {
+.card__title {
   color: #000;
   max-width: 240px;
   text-overflow: ellipsis;
@@ -39,25 +34,25 @@
   line-height: 1;
 }
 
-.photo-grid__card-button_like {
+.card__like-button {
   background: url(../images/stroke.svg) center no-repeat;
   width: 22px;
   height: 22px;
   border: 0;
 }
 
-.photo-grid__card-button_like:hover {
+.card__like-button:hover {
   opacity: 60%;
 }
 
-.photo-grid__card-button_like_active {
+.card__like-button_active {
   background: url(../images/filled.svg) center no-repeat;
   width: 22px;
   height: 22px;
   border: 0;
 }
 
-.photo-grid__card-button_delete {
+.card__delete-button {
   background: url(../images/delete.svg) center no-repeat;
   position: absolute;
   top: 18px;
@@ -66,7 +61,7 @@
   width: 22px;
   height: 22px;
 }
-.photo-grid__card-button_delete:hover {
+.card__delete-button:hover {
   opacity: 60%;
 }
 @media screen and (min-width: 768px) {
@@ -77,12 +72,12 @@
     grid-gap: 17px 20px;
   }
 
-  .photo-grid__card {
+  .card {
     width: 100%;
     height: 360px;
   }
 
-  .photo-grid__card-title {
+  .card-title {
     max-width: 165px;
   }
 }
@@ -93,7 +88,7 @@
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 17px 20px;
   }
-  .photo-grid__card-title {
+  .card-title {
     max-width: 200px;
   }
 }
