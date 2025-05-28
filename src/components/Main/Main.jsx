@@ -1,31 +1,12 @@
-import Avatar from "/images/avatar.png";
 import EditAvatar from "../Form/EditAvatar/EditAvatar";
 import EditProfile from "../Form/EditProfile/EditProfile";
 import NewCard from "../Form/NewCard/NewCard";
-import ImagePopup from "../ImagePopup/ImagePopup";
 import Popup from "./Popup/Popup";
 import Card from "./Card/Card";
+import { useState, useEffect } from "react";
 
-import { useState } from "react";
-
-const cards = [
-  {
-    isLiked: false,
-    _id: "5d1f0611d321eb4bdcd707dd",
-    name: "Yosemite Valley",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_yosemite.jpg",
-    owner: "5d1f0611d321eb4bdcd707dd",
-    createdAt: "2019-07-05T08:10:57.741Z",
-  },
-  {
-    isLiked: false,
-    _id: "5d1f064ed321eb4bdcd707de",
-    name: "Lake Louise",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_lake-louise.jpg",
-    owner: "5d1f0611d321eb4bdcd707dd",
-    createdAt: "2019-07-05T08:11:58.324Z",
-  },
-];
+import api from "../../utils/Api.js";
+import CurrentUserContext from "../../contexts/CurrentUserContext";
 
 export default function Main() {
   const [popup, setPopup] = useState(null);
@@ -47,6 +28,26 @@ export default function Main() {
     setPopup(null);
   }
 
+  const [cards, setCards] = useState([]);
+  useEffect(() => {
+    api.getUserData();
+  }, [cards]);
+
+  async function handleCardLike(card) {
+    const isLiked = card.isLiked;
+
+    await api
+      .changeLikeCardStatus(card._id, !isLiked)
+      .then((newCard) => {
+        setCards((state) =>
+          state.map((currentCard) =>
+            currentCard._id === card._id ? newCard : currentCard
+          )
+        );
+      })
+      .catch((error) => console.error(error));
+  }
+
   return (
     <main className="content">
       <section className="profile" id="profile">
@@ -56,11 +57,15 @@ export default function Main() {
             type="button"
             onClick={() => handleOpenPopup(editAvatarPopup)}
           ></div>
-          <img src={Avatar} alt="Avatar image" className="profile__avatar" />
+          <img
+            src={CurrentUserContext.avatar}
+            alt="Avatar image"
+            className="profile__avatar"
+          />
 
           <div className="profile__labels">
             <div className="profile__title">
-              <h2 className="profile__name">John Doe</h2>
+              <h2 className="profile__name">{CurrentUserContext.name}</h2>
               <button
                 aria-label="Edit profile"
                 className="profile__edit-button"
@@ -68,7 +73,7 @@ export default function Main() {
                 onClick={() => handleOpenPopup(editProfilePopup)}
               ></button>
             </div>
-            <p className="profile__description">Person</p>
+            <p className="profile__description">{CurrentUserContext.about}</p>
           </div>
         </div>
         <button
