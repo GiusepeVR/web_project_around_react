@@ -4,6 +4,7 @@ import NewCard from "../Form/NewCard/NewCard";
 import Popup from "./Popup/Popup";
 import Card from "./Card/Card";
 import { useState, useEffect, useContext } from "react";
+import { CurrentUserContext } from "../../contexts/CurrentUserContext.js";
 
 import api from "../../utils/Api.js";
 
@@ -33,6 +34,8 @@ export default function Main(props) {
       "https://fotografias.antena3.com/clipping/cmsimages02/2024/05/16/8F77CEFB-88BC-41F2-BFCB-7232ECA93B09/pedro-pascal-como-joel-the-last-2_104.jpg?crop=2160,2160,x583,y0&width=1200&height=1200&optimize=low&format=webply",
     about: "Nini",
   });
+
+  const { currentUser } = useContext(CurrentUserContext);
 
   useEffect(() => {
     api
@@ -86,14 +89,14 @@ export default function Main(props) {
             onClick={() => handleOpenPopup(editAvatarPopup)}
           ></div>
           <img
-            src={user.avatar}
+            src={currentUser.avatar}
             alt="Avatar image"
             className="profile__avatar"
           />
 
           <div className="profile__labels">
             <div className="profile__title">
-              <h2 className="profile__name">{user.name}</h2>
+              <h2 className="profile__name">{currentUser.name}</h2>
               <button
                 aria-label="Edit profile"
                 className="profile__edit-button"
@@ -101,7 +104,7 @@ export default function Main(props) {
                 onClick={() => handleOpenPopup(editProfilePopup)}
               ></button>
             </div>
-            <p className="profile__description">{user.about}</p>
+            <p className="profile__description">{currentUser.about}</p>
           </div>
         </div>
         <button

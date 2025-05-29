@@ -1,5 +1,6 @@
 import ImagePopup from "../../ImagePopup/ImagePopup";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { CurrentUserContext } from "../../../contexts/CurrentUserContext";
 
 export default function Card(props) {
   const { card, handleOpenPopup, onCardLike, onCardDelete } = props;
@@ -19,6 +20,8 @@ export default function Card(props) {
   function handleDeleteClick() {
     onCardDelete(card);
   }
+
+  const { currentUser } = useContext(CurrentUserContext);
 
   return (
     <li className="card">
