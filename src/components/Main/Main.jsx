@@ -1,33 +1,14 @@
-import Avatar from "/images/avatar.png";
 import EditAvatar from "../Form/EditAvatar/EditAvatar";
 import EditProfile from "../Form/EditProfile/EditProfile";
 import NewCard from "../Form/NewCard/NewCard";
-import ImagePopup from "../ImagePopup/ImagePopup";
 import Popup from "./Popup/Popup";
 import Card from "./Card/Card";
+import { useState, useEffect, useContext } from "react";
+import { CurrentUserContext } from "../../contexts/CurrentUserContext.js";
 
-import { useState } from "react";
+import api from "../../utils/Api.js";
 
-const cards = [
-  {
-    isLiked: false,
-    _id: "5d1f0611d321eb4bdcd707dd",
-    name: "Yosemite Valley",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_yosemite.jpg",
-    owner: "5d1f0611d321eb4bdcd707dd",
-    createdAt: "2019-07-05T08:10:57.741Z",
-  },
-  {
-    isLiked: false,
-    _id: "5d1f064ed321eb4bdcd707de",
-    name: "Lake Louise",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_lake-louise.jpg",
-    owner: "5d1f0611d321eb4bdcd707dd",
-    createdAt: "2019-07-05T08:11:58.324Z",
-  },
-];
-
-export default function Main() {
+export default function Main(props) {
   const [popup, setPopup] = useState(null);
   const newCardPopup = { title: "Nuevo lugar", children: <NewCard /> };
   const editAvatarPopup = {
@@ -47,6 +28,57 @@ export default function Main() {
     setPopup(null);
   }
 
+  const [user, setUser] = useState({
+    name: "Joel Miller",
+    avatar:
+      "https://fotografias.antena3.com/clipping/cmsimages02/2024/05/16/8F77CEFB-88BC-41F2-BFCB-7232ECA93B09/pedro-pascal-como-joel-the-last-2_104.jpg?crop=2160,2160,x583,y0&width=1200&height=1200&optimize=low&format=webply",
+    about: "Nini",
+  });
+
+  const { currentUser } = useContext(CurrentUserContext);
+
+  useEffect(() => {
+    api
+      .getUserData()
+      .then((data) => {
+        setUser(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  const [cards, setCards] = useState([]);
+  useEffect(() => {
+    api.getInitialCards().then((data) => {
+      setCards(data);
+    });
+  }, []);
+
+  async function handleCardLike(card) {
+    const isLiked = card.isLiked;
+
+    await api
+      .handleCardLike(card._id, isLiked)
+      .then((newCard) => {
+        setCards((state) =>
+          state.map((currentCard) =>
+            currentCard._id === card._id ? newCard : currentCard
+          )
+        );
+      })
+      .catch((error) => console.error(error));
+  }
+
+  async function handleCardDelete(card) {
+    await api
+      .deleteCard(card._id)
+      .then((res) => {
+        setCards((state) => state.filter((c) => c._id !== card._id));
+      })
+      .catch((error) => console.error(error));
+  }
+
   return (
     <main className="content">
       <section className="profile" id="profile">
@@ -56,11 +88,15 @@ export default function Main() {
             type="button"
             onClick={() => handleOpenPopup(editAvatarPopup)}
           ></div>
-          <img src={Avatar} alt="Avatar image" className="profile__avatar" />
+          <img
+            src={currentUser.avatar}
+            alt="Avatar image"
+            className="profile__avatar"
+          />
 
           <div className="profile__labels">
             <div className="profile__title">
-              <h2 className="profile__name">John Doe</h2>
+              <h2 className="profile__name">{currentUser.name}</h2>
               <button
                 aria-label="Edit profile"
                 className="profile__edit-button"
@@ -68,7 +104,7 @@ export default function Main() {
                 onClick={() => handleOpenPopup(editProfilePopup)}
               ></button>
             </div>
-            <p className="profile__description">Person</p>
+            <p className="profile__description">{currentUser.about}</p>
           </div>
         </div>
         <button
@@ -83,8 +119,9 @@ export default function Main() {
           <Card
             key={card._id}
             card={card}
-            isLiked={card.isLiked}
             handleOpenPopup={handleOpenPopup}
+            onCardLike={handleCardLike}
+            onCardDelete={handleCardDelete}
           />
         ))}
       </ul>
