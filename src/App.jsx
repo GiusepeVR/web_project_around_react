@@ -3,7 +3,7 @@ import Main from "./components/Main/Main.jsx";
 import Footer from "./components/Footer/Footer.jsx";
 import { useContext, useState } from "react";
 
-import CurrentUserContext from "./contexts/CurrentUserContext.js";
+import { CurrentUserContext } from "./contexts/CurrentUserContext.js";
 
 function App() {
   const [currentUser, setCurrentUser] = useState("");
@@ -11,7 +11,7 @@ function App() {
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
         <Header />
-        <Main />
+        <Main setCurrentUser={setCurrentUser} />
         <Footer />
       </CurrentUserContext.Provider>
     </div>

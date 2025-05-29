@@ -3,12 +3,11 @@ import EditProfile from "../Form/EditProfile/EditProfile";
 import NewCard from "../Form/NewCard/NewCard";
 import Popup from "./Popup/Popup";
 import Card from "./Card/Card";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import api from "../../utils/Api.js";
-import CurrentUserContext from "../../contexts/CurrentUserContext";
 
-export default function Main() {
+export default function Main(props) {
   const [popup, setPopup] = useState(null);
   const newCardPopup = { title: "Nuevo lugar", children: <NewCard /> };
   const editAvatarPopup = {
@@ -28,22 +27,51 @@ export default function Main() {
     setPopup(null);
   }
 
+  const [user, setUser] = useState({
+    name: "Joel Miller",
+    avatar:
+      "https://fotografias.antena3.com/clipping/cmsimages02/2024/05/16/8F77CEFB-88BC-41F2-BFCB-7232ECA93B09/pedro-pascal-como-joel-the-last-2_104.jpg?crop=2160,2160,x583,y0&width=1200&height=1200&optimize=low&format=webply",
+    about: "Nini",
+  });
+
+  useEffect(() => {
+    api
+      .getUserData()
+      .then((data) => {
+        setUser(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   const [cards, setCards] = useState([]);
   useEffect(() => {
-    api.getUserData();
-  }, [cards]);
+    api.getInitialCards().then((data) => {
+      setCards(data);
+    });
+  }, []);
 
   async function handleCardLike(card) {
     const isLiked = card.isLiked;
 
     await api
-      .changeLikeCardStatus(card._id, !isLiked)
+      .handleCardLike(card._id, isLiked)
       .then((newCard) => {
         setCards((state) =>
           state.map((currentCard) =>
             currentCard._id === card._id ? newCard : currentCard
           )
         );
+      })
+      .catch((error) => console.error(error));
+  }
+
+  async function handleCardDelete(card) {
+    await api
+      .deleteCard(card._id)
+      .then((res) => {
+        setCards((state) => state.filter((c) => c._id !== card._id));
       })
       .catch((error) => console.error(error));
   }
@@ -58,14 +86,14 @@ export default function Main() {
             onClick={() => handleOpenPopup(editAvatarPopup)}
           ></div>
           <img
-            src={CurrentUserContext.avatar}
+            src={user.avatar}
             alt="Avatar image"
             className="profile__avatar"
           />
 
           <div className="profile__labels">
             <div className="profile__title">
-              <h2 className="profile__name">{CurrentUserContext.name}</h2>
+              <h2 className="profile__name">{user.name}</h2>
               <button
                 aria-label="Edit profile"
                 className="profile__edit-button"
@@ -73,7 +101,7 @@ export default function Main() {
                 onClick={() => handleOpenPopup(editProfilePopup)}
               ></button>
             </div>
-            <p className="profile__description">{CurrentUserContext.about}</p>
+            <p className="profile__description">{user.about}</p>
           </div>
         </div>
         <button
@@ -88,8 +116,9 @@ export default function Main() {
           <Card
             key={card._id}
             card={card}
-            isLiked={card.isLiked}
             handleOpenPopup={handleOpenPopup}
+            onCardLike={handleCardLike}
+            onCardDelete={handleCardDelete}
           />
         ))}
       </ul>
