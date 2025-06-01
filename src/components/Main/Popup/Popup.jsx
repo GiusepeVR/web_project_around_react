@@ -1,5 +1,5 @@
 export default function Popup(props) {
-  const { onClose, title, children } = props;
+  const { onClosePopup, title, children } = props;
 
   return (
     <div className="popup">
@@ -12,7 +12,7 @@ export default function Popup(props) {
           aria-label="Close modal"
           className="popup__close"
           type="button"
-          onClick={onClose}
+          onClick={onClosePopup}
         />
         {title ? <h3 className="popup__title">{title}</h3> : <></>}
         {children}
