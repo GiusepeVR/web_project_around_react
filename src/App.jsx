@@ -6,7 +6,12 @@ import api from "./utils/Api.js";
 import { CurrentUserContext } from "./contexts/CurrentUserContext.js";
 
 function App() {
-  const [currentUser, setCurrentUser] = useState({});
+  const [currentUser, setCurrentUser] = useState({
+    name: "Joel Miller",
+    avatar:
+      "https://fotografias.antena3.com/clipping/cmsimages02/2024/05/16/8F77CEFB-88BC-41F2-BFCB-7232ECA93B09/pedro-pascal-como-joel-the-last-2_104.jpg?crop=2160,2160,x583,y0&width=1200&height=1200&optimize=low&format=webply",
+    about: "Nini",
+  });
 
   useEffect(() => {
     (async () => {
@@ -20,16 +25,42 @@ function App() {
     (async () => {
       await api.updateUserData(data).then((newData) => {
         setCurrentUser(newData);
+        handleClosePopup();
       });
     })();
   };
 
+  const handleUpdateUserAvatar = (data) => {
+    (async () => {
+      await api.updateUserAvatar(data).then((newData) => {
+        setCurrentUser(newData);
+        handleClosePopup();
+      });
+    })();
+  };
+
+  const [popup, setPopup] = useState(null);
+
+  function handleOpenPopup(popup) {
+    setPopup(popup);
+  }
+
+  function handleClosePopup() {
+    setPopup(null);
+  }
+
   return (
-    <CurrentUserContext.Provider value={{ currentUser, handleUpdateUser }}>
+    <CurrentUserContext.Provider
+      value={{ currentUser, handleUpdateUser, handleUpdateUserAvatar }}
+    >
       <div className="page">
         <Header />
-        {/* <Main setCurrentUser={setCurrentUser} /> */}
-        <Main setCurrentUser={setCurrentUser} />
+        <Main
+          setCurrentUser={setCurrentUser}
+          onOpenPopup={handleOpenPopup}
+          onClosePopup={handleClosePopup}
+          popup={popup}
+        />
         <Footer />
       </div>
     </CurrentUserContext.Provider>

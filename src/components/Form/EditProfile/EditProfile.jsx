@@ -2,15 +2,6 @@ import { useState, useContext } from "react";
 import { CurrentUserContext } from "../../../contexts/CurrentUserContext.js";
 
 export default function EditProfile() {
-  // const currentUser = useContext(CurrentUserContext);
-  // const [name, setName] = useState(currentUser.name);
-  // const [description, setDescription] = useState(currentUser.about);
-  // const handleNameChange = (event) => {
-  //   setName(event.target.value);
-  // };
-  // const handleDescriptionChange = (event) => {
-  //   setDescription(event.target.value);
-  // };
   const userContext = useContext(CurrentUserContext);
   const { currentUser, handleUpdateUser } = userContext;
 
@@ -28,7 +19,6 @@ export default function EditProfile() {
   const handleSubmit = (event) => {
     event.preventDefault();
     handleUpdateUser({ name, about: description });
-    console.log("lul");
   };
 
   return (
@@ -36,7 +26,6 @@ export default function EditProfile() {
       className="popup__form"
       name="profile-form"
       id="edit-profile-form"
-      noValidate
       onSubmit={handleSubmit}
     >
       <label className="popup__field">

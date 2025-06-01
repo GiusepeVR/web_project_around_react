@@ -8,8 +8,12 @@ import { CurrentUserContext } from "../../contexts/CurrentUserContext.js";
 
 import api from "../../utils/Api.js";
 
-export default function Main(props) {
-  const [popup, setPopup] = useState(null);
+export default function Main({
+  popup,
+  onOpenPopup,
+  onClosePopup,
+  setCurrentUser,
+}) {
   const newCardPopup = { title: "Nuevo lugar", children: <NewCard /> };
   const editAvatarPopup = {
     title: "Cambiar foto de perfil",
@@ -20,28 +24,13 @@ export default function Main(props) {
     children: <EditProfile />,
   };
 
-  function handleOpenPopup(popup) {
-    setPopup(popup);
-  }
-
-  function handleClosePopup() {
-    setPopup(null);
-  }
-
-  const [user, setUser] = useState({
-    name: "Joel Miller",
-    avatar:
-      "https://fotografias.antena3.com/clipping/cmsimages02/2024/05/16/8F77CEFB-88BC-41F2-BFCB-7232ECA93B09/pedro-pascal-como-joel-the-last-2_104.jpg?crop=2160,2160,x583,y0&width=1200&height=1200&optimize=low&format=webply",
-    about: "Nini",
-  });
-
   const { currentUser } = useContext(CurrentUserContext);
 
   useEffect(() => {
     api
       .getUserData()
       .then((data) => {
-        setUser(data);
+        setCurrentUser(data);
       })
       .catch((err) => {
         console.log(err);
@@ -86,7 +75,7 @@ export default function Main(props) {
           <div
             className="profile__avatar-container"
             type="button"
-            onClick={() => handleOpenPopup(editAvatarPopup)}
+            onClick={() => onOpenPopup(editAvatarPopup)}
           ></div>
           <img
             src={currentUser.avatar}
@@ -101,7 +90,7 @@ export default function Main(props) {
                 aria-label="Edit profile"
                 className="profile__edit-button"
                 type="button"
-                onClick={() => handleOpenPopup(editProfilePopup)}
+                onClick={() => onOpenPopup(editProfilePopup)}
               ></button>
             </div>
             <p className="profile__description">{currentUser.about}</p>
@@ -111,7 +100,7 @@ export default function Main(props) {
           aria-label="Add card"
           className="profile__add-button"
           type="button"
-          onClick={() => handleOpenPopup(newCardPopup)}
+          onClick={() => onOpenPopup(newCardPopup)}
         />
       </section>
       <ul className="cards__list">
@@ -119,14 +108,14 @@ export default function Main(props) {
           <Card
             key={card._id}
             card={card}
-            handleOpenPopup={handleOpenPopup}
+            onOpenPopup={onOpenPopup}
             onCardLike={handleCardLike}
             onCardDelete={handleCardDelete}
           />
         ))}
       </ul>
       {popup && (
-        <Popup onClose={handleClosePopup} title={popup.title}>
+        <Popup onClosePopup={onClosePopup} title={popup.title}>
           {popup.children}
         </Popup>
       )}
