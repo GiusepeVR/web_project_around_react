@@ -2,8 +2,8 @@ import Header from "./components/Header/Header.jsx";
 import Main from "./components/Main/Main.jsx";
 import Footer from "./components/Footer/Footer.jsx";
 import { useEffect, useState } from "react";
-import api from "./utils/Api.js";
 import { CurrentUserContext } from "./contexts/CurrentUserContext.js";
+import api from "./utils/Api.js";
 
 function App() {
   const [currentUser, setCurrentUser] = useState({
@@ -49,6 +49,48 @@ function App() {
     setPopup(null);
   }
 
+  const [cards, setCards] = useState([]);
+
+  useEffect(() => {
+    api.getInitialCards().then((data) => {
+      setCards(data);
+    });
+  }, []);
+
+  async function handleCardLike(card) {
+    const isLiked = card.isLiked;
+
+    await api
+      .handleCardLike(card._id, isLiked)
+      .then((newCard) => {
+        setCards((state) =>
+          state.map((currentCard) =>
+            currentCard._id === card._id ? newCard : currentCard
+          )
+        );
+      })
+      .catch((error) => console.error(error));
+  }
+
+  async function handleCardDelete(card) {
+    await api
+      .deleteCard(card._id)
+      .then(() => {
+        setCards((state) => state.filter((c) => c._id !== card._id));
+      })
+      .catch((error) => console.error(error));
+  }
+
+  async function handleAddCard(newCard) {
+    await api
+      .addCard(newCard)
+      .then((addedCard) => {
+        setCards([addedCard, ...cards]);
+      })
+      .catch((error) => console.error(error));
+    handleClosePopup();
+  }
+
   return (
     <CurrentUserContext.Provider
       value={{ currentUser, handleUpdateUser, handleUpdateUserAvatar }}
@@ -56,6 +98,10 @@ function App() {
       <div className="page">
         <Header />
         <Main
+          cards={cards}
+          onCardLike={handleCardLike}
+          onCardDelete={handleCardDelete}
+          onAddCard={handleAddCard}
           setCurrentUser={setCurrentUser}
           onOpenPopup={handleOpenPopup}
           onClosePopup={handleClosePopup}
