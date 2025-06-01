@@ -1,10 +1,32 @@
-export default function NewCard() {
+import { useState } from "react";
+
+export default function NewCard({ onAddCard }) {
+  const [placeName, setPlaceName] = useState("");
+  const [placeUrl, setPlaceUrl] = useState("");
+
+  const handlePlaceNameChange = (event) => {
+    setPlaceName(event.target.value);
+  };
+
+  const handlePlaceUrlChange = (event) => {
+    setPlaceUrl(event.target.value);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    onAddCard({
+      isLiked: false,
+      name: placeName,
+      link: placeUrl,
+    });
+  };
+
   return (
     <form
       className="popup__form"
       name="card-form"
       id="new-card-form"
-      noValidate
+      onSubmit={handleSubmit}
     >
       <label className="popup__field">
         <input
@@ -16,6 +38,8 @@ export default function NewCard() {
           placeholder="Title"
           required
           type="text"
+          value={placeName}
+          onChange={handlePlaceNameChange}
         />
         <span className="popup__error" id="card-name-error"></span>
       </label>
@@ -27,6 +51,8 @@ export default function NewCard() {
           placeholder="Image link"
           required
           type="url"
+          value={placeUrl}
+          onChange={handlePlaceUrlChange}
         />
         <span className="popup__error" id="card-link-error"></span>
       </label>

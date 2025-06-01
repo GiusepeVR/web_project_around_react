@@ -3,7 +3,7 @@ import { useState, useEffect, useContext } from "react";
 import { CurrentUserContext } from "../../../contexts/CurrentUserContext";
 
 export default function Card(props) {
-  const { card, handleOpenPopup, onCardLike, onCardDelete } = props;
+  const { card, onOpenPopup, onCardLike, onCardDelete } = props;
 
   const imageComponent = {
     children: <ImagePopup card={card} />,
@@ -29,7 +29,7 @@ export default function Card(props) {
         className="card__image"
         src={card.link}
         alt="Landscape"
-        onClick={() => handleOpenPopup(imageComponent)}
+        onClick={() => onOpenPopup(imageComponent)}
       />
       <button
         aria-label="Delete card"
